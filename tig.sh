@@ -41,14 +41,14 @@ fi
 read -p "请输入Challenge 1算法(默认satisfiability/sat_allocd): " C1A1
 C1A1=${C1A1:-"satisfiability/sat_allocd"}
 merge_algo $C1A1
-read -p "请输入Challenge 2算法(默认vehicle_routing/clarke_wright): " C2A2
-C2A2=${C2A2:-"vehicle_routing/clarke_wright"}
+read -p "请输入Challenge 2算法(默认vehicle_routing/clarke_wright_super): " C2A2
+C2A2=${C2A2:-"vehicle_routing/clarke_wright_super"}
 merge_algo $C2A2
 read -p "请输入Challenge 3算法(默认knapsack/knapmaxxing): " C3A3
 C3A3=${C3A3:-"knapsack/knapmaxxing"}
 merge_algo $C3A3
-read -p "请输入Challenge 4算法(默认vector_search/fast_search): " C4A4
-C4A4=${C4A4:-"vector_search/fast_search"}
+read -p "请输入Challenge 4算法(默认vector_search/optimax_gpu): " C4A4
+C4A4=${C4A4:-"vector_search/optimax_gpu"}
 merge_algo $C4A4
 
 # build benchmarker
@@ -62,7 +62,7 @@ A3=$(echo "$C3A3" | cut -d'/' -f2)
 C4=$(echo "$C4A4" | cut -d'/' -f1)
 A4=$(echo "$C4A4" | cut -d'/' -f2)
 ALGOS_TO_COMPILE="${C1}_${A1} ${C2}_${A2} ${C3}_${A3} ${C4}_${A4}"
-read -p "是否使用CUDA？(y/n)" ifcuda
+read -p "是否使用CUDA？(y/n): " ifcuda
 ifcuda=$(echo "$ifcuda" | tr '[:upper:]' '[:lower:]')
 case "$ifcuda" in
     y|yes)
