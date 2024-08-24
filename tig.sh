@@ -62,21 +62,32 @@ A3=$(echo "$C3A3" | cut -d'/' -f2)
 C4=$(echo "$C4A4" | cut -d'/' -f1)
 A4=$(echo "$C4A4" | cut -d'/' -f2)
 ALGOS_TO_COMPILE="${C1}_${A1} ${C2}_${A2} ${C3}_${A3} ${C4}_${A4}"
-USE_CUDA="cuda"
+read -p "是否使用CUDA？(y/n)" ifcuda
+ifcuda=$(echo "$ifcuda" | tr '[:upper:]' '[:lower:]')
+case "$ifcuda" in
+    y|yes)
+	USE_CUDA='cuda'
+	;;
+    n|no)
+	:
+	;;
+    *)
+	echo "输入有误！"
+esac
 cargo build -p tig-benchmarker --release --no-default-features --features "standalone ${ALGOS_TO_COMPILE} ${USE_CUDA}"
 echo "{\"$C1\":\"$A1\",\"$C2\":\"$A2\",\"$C3\":\"$A3\",\"$C4\":\"$A4\"}" > algo_selection.json
 read -p "请输入钱包地址: " ADDRESS
 read -p "请输入API_KEY: " API_KEY
 read -p "请输入workers(默认4): " WORKERS
 WORKERS=${WORKERS:-"4"}
-read -p "请输入duration(默认7500): " DURATION
-DURATION=${DURATION:-"7500"}
-read -p "请输入offset(默认5000000): " OFFSET
-OFFSET=${OFFSET:-"5000000"}
 read -p "请输入母机IP(若不需要直接回车): " MASTER
 if [[ -n "$MASTER" ]]; then
-    screen -dmS tig bash -c "../target/release/tig-benchmarker --workers $WORKERS --duration $DURATION --master $MASTER --offset $OFFSET $ADDRESS $API_KEY algo_selection.json"
+    screen -dmS tig bash -c "../target/release/tig-benchmarker --workers $WORKERS --master $MASTER $ADDRESS $API_KEY algo_selection.json"
 else
+    read -p "请输入duration(默认7500): " DURATION
+    DURATION=${DURATION:-"7500"}
+    read -p "请输入offset(默认5000000): " OFFSET
+    OFFSET=${OFFSET:-"5000000"}
     screen -dmS tig bash -c "../target/release/tig-benchmarker --workers $WORKERS --duration $DURATION --offset $OFFSET $ADDRESS $API_KEY algo_selection.json"
 fi
 
