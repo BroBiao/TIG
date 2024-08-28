@@ -75,20 +75,15 @@ case "$ifcuda" in
 	echo "输入有误！"
 esac
 cargo build -p tig-benchmarker --release --no-default-features --features "standalone ${ALGOS_TO_COMPILE} ${USE_CUDA}"
-echo "{\"$C1\":\"$A1\",\"$C2\":\"$A2\",\"$C3\":\"$A3\",\"$C4\":\"$A4\"}" > algo_selection.json
+SELECTED_ALGORITHMS="{\"$C1\":\"$A1\",\"$C2\":\"$A2\",\"$C3\":\"$A3\",\"$C4\":\"$A4\"}"
 read -p "请输入钱包地址: " ADDRESS
 read -p "请输入API_KEY: " API_KEY
 read -p "请输入workers(默认4): " WORKERS
 WORKERS=${WORKERS:-"4"}
+read -p "请输入duration(默认7500): " DURATION
+DURATION=${DURATION:-"7500"}
+CMD="../target/release/tig-benchmarker $ADDRESS $API_KEY $SELECTED_ALGORITHMS --workers $WORKERS --duration $DURATION"
 read -p "请输入母机IP(若不需要直接回车): " MASTER
-if [[ -n "$MASTER" ]]; then
-    screen -dmS tig bash -c "../target/release/tig-benchmarker --workers $WORKERS --master $MASTER $ADDRESS $API_KEY algo_selection.json"
-else
-    read -p "请输入duration(默认7500): " DURATION
-    DURATION=${DURATION:-"7500"}
-    read -p "请输入offset(默认5000000): " OFFSET
-    OFFSET=${OFFSET:-"5000000"}
-    screen -dmS tig bash -c "../target/release/tig-benchmarker --workers $WORKERS --duration $DURATION --offset $OFFSET $ADDRESS $API_KEY algo_selection.json"
-fi
-
+[[ -n "$MASTER" ]] && CMD+=" --master $MASTER"
+screen -dmS tig bash -c "$CMD"
 echo "------------------------挖矿已启动,请通过 screen -r tig 查看--------------------------------"
