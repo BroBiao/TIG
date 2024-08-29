@@ -75,14 +75,14 @@ case "$ifcuda" in
 	echo "输入有误！"
 esac
 cargo build -p tig-benchmarker --release --no-default-features --features "standalone ${ALGOS_TO_COMPILE} ${USE_CUDA}"
-SELECTED_ALGORITHMS="{\"$C1\":\"$A1\",\"$C2\":\"$A2\",\"$C3\":\"$A3\",\"$C4\":\"$A4\"}"
+SELECTED_ALGORITHMS='{"'"$C1"'":"'"$A1"'","'"$C2"'":"'"$A2"'","'"$C3"'":"'"$A3"'","'"$C4"'":"'"$A4"'"}'
 read -p "请输入钱包地址: " ADDRESS
 read -p "请输入API_KEY: " API_KEY
 read -p "请输入workers(默认4): " WORKERS
 WORKERS=${WORKERS:-"4"}
 read -p "请输入duration(默认7500): " DURATION
 DURATION=${DURATION:-"7500"}
-CMD="../target/release/tig-benchmarker $ADDRESS $API_KEY $SELECTED_ALGORITHMS --workers $WORKERS --duration $DURATION"
+CMD="../target/release/tig-benchmarker $ADDRESS $API_KEY '$SELECTED_ALGORITHMS' --workers $WORKERS --duration $DURATION"
 read -p "请输入母机IP(若不需要直接回车): " MASTER
 [[ -n "$MASTER" ]] && CMD+=" --master $MASTER"
 screen -dmS tig bash -c "$CMD"
